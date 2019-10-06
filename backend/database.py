@@ -5,7 +5,7 @@ from os import path, getcwd
 def process_devir(ruta):
     top = []
     bottom = []
-    for row in read_cvs(ruta):
+    for row in read_csv(ruta):
         if not is_empty(row) and row[0] != '':
             column = row.index('')
             a = trim(row[:column])
@@ -43,7 +43,7 @@ def process_devir(ruta):
 
 def process_sd_dist(ruta):
     tabla = []
-    for fila in read_cvs(ruta):
+    for fila in read_csv(ruta):
         if fila[1] != '' and len(fila[1]) == 11:
             f = trim(fila[1:], delete_empty=False)
             fila = f[0:4] + f[5:]
@@ -69,6 +69,27 @@ def process_sd_dist(ruta):
             'autor': row[8]
             })
     return table
+
+
+def open_table(ruta):
+    tabla = []
+    datos = read_cvs(ruta)
+    header = datos[0]
+    rows = datos[1:]
+    for i, row in enumerate(rows):
+        tabla.append({})
+        for j, value in enumerate(row):
+                head = header[j]
+                if head == 'codigo' :
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        # sd_dist codes are not numeric.
+                        pass
+                elif head in ('precio','precio_siva', 'descuento'):
+                    value = float(value)
+                tabla[i].update({header[j]:value})
+    return tabla
 
 
 tablas = {

@@ -3,15 +3,17 @@ from pygame import quit
 from sys import exit
 import csv
 
-csv.register_dialect('myCSV', delimiter=';')
+class MyCSV(csv.excel):
+    delimiter = ';'
+csv.register_dialect('MyCSV',MyCSV)
 
 
-def read_cvs(ruta):
+def read_csv(ruta):
     """Lee archivos CSV y los devuelve como una lista."""
 
     table = []
     with open(ruta, encoding='windows-1252') as file:
-        data = csv.reader(file, dialect='myCSV')
+        data = csv.reader(file, dialect=MyCSV)
         for row in data:
             table.append(row)
         if len(table) == 1:
@@ -20,11 +22,21 @@ def read_cvs(ruta):
     return table
 
 
+def write_csv(ruta, tabla):
+    with open(ruta, 'w+t', newline='') as csvfile:
+        fieldnames = list(tabla[0].keys())
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames,dialect=MyCSV)
+        writer.writeheader()
+        writer.writerows(tabla)
+
+
 def is_empty(line):
     return all(line[i] == '' for i in range(len(line)))
 
 
-def trim(line, delete_empty=True):
+def trim(line, delete_empty=True, newline=True):
+    if newline:
+        line = [''.join(item.splitlines()) for item in line]
     if delete_empty:
         return [item.strip() for item in line if item != '']
     else:
