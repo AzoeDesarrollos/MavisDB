@@ -1,6 +1,7 @@
 from pygame import Surface, font, key, draw, K_LSHIFT, K_RSHIFT, KMOD_CAPS
+from pygame import K_0, K_2, K_3, K_4, K_5, K_6, K_8, K_9
 from backend.eventhandler import EventHandler
-from backend.event_functions import costo_por_clave, select_many
+from backend.event_functions import select_many
 # from backend.levenshtein import probar_input
 from frontend import Renderer, WidgetHandler
 from .basewidget import BaseWidget
@@ -30,11 +31,10 @@ class Entry(BaseWidget):
     def button_trigger(self):
         nombre = ''.join(self.input).upper()
         selection = select_many('precio', nombre, 'nombre')
+        string = ''
         if len(selection) == 1:
-            string = '$'+str(selection[0]['precio'])
+            string = selection[0]['nombre']+': $'+str(selection[0]['precio'])
         else:
-            print(len(selection))
-            string = ''
             for item in selection:
                 string += item['nombre']+': $'+str(item['precio'])+'\n'
 
@@ -50,7 +50,28 @@ class Entry(BaseWidget):
             self.del_character()
         elif name == 'enter' or name == 'return':
             self.button_trigger()
-        elif name.isalnum():
+        elif tecla in (K_LSHIFT, K_RSHIFT):
+            pass
+        elif name.isdecimal():
+            if shift:
+                if tecla == K_0:
+                    name = '='
+                elif tecla == K_2:
+                    name = '"'
+                elif tecla == K_3:
+                    name = '#'
+                elif tecla == K_4:
+                    name = '$'
+                elif tecla == K_5:
+                    name = '%'
+                elif tecla == K_6:
+                    name = '&'
+                elif tecla == K_8:
+                    name = '('
+                elif tecla == K_9:
+                    name = ')'
+            self.input_character(name)
+        elif name.isalpha:
             if shift:
                 name = name.upper()
             self.input_character(name)

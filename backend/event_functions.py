@@ -21,12 +21,7 @@ def devolver_todos():
     return [i['nombre'] for i in tablas['devir']]+[j['nombre'] for j in tablas['sd_dist']]
 
 
-def costo_por_clave(table, value, clave):
-    return select_one('precio', table, clave, value)
-
-
 __all__ = [
-    'costo_por_clave',
     'devolver_todos',
     'select_many'
     ]
