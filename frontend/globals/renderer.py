@@ -1,4 +1,4 @@
-from pygame import display, init
+from pygame import display, init, image
 from pygame.sprite import LayeredDirty
 from .constantes import ALTO, ANCHO, COLOR_FONDO
 import os
@@ -11,6 +11,10 @@ class Renderer:
     def init(cls):
         init()
         os.environ['SDL_VIDEO_CENTERED'] = "{!s},{!s}".format(0, 0)
+        if os.path.exists(os.path.join(os.getcwd(),'lib')):
+            icon = image.load('lib/icon.png')
+            icon.set_colorkey((255,255,255,0))
+            display.set_icon(icon)
         display.set_caption("PMCDB: PyMavisCustomDatabase")
         display.set_mode((ANCHO, ALTO))
         cls.contents = LayeredDirty()
