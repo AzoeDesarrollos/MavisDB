@@ -2,6 +2,7 @@ from .eventhandler import EventHandler
 from pygame import quit
 from sys import exit
 import csv
+import os
 
 
 class MyCSV(csv.excel):
@@ -51,3 +52,6 @@ def salir_handler(event):
 
 
 EventHandler.register(salir_handler, 'salir')
+
+if 'data' not in os.listdir(os.getcwd()):
+    os.mkdir(os.path.join(os.getcwd(), 'data'))

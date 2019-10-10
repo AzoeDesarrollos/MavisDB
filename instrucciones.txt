@@ -1,9 +1,11 @@
 Instrucciones sobre el uso de este programa:
-1) Ingresar el nombre del objeto buscado en la barra de consulta. Puede ingresarse un nombre
+1) Colocar los archivos .csv en la carpeta "data" del programa. El programa procesará esos
+   archivos al inicio.
+2) Ingresar el nombre del objeto buscado en la barra de consulta. Puede ingresarse un nombre
    completo, o parte del mismo.
-2) Hacer clic en el Botón Consulta o bien, tocar la tecla Enter o la tecla Intro.
-3) Los resultados de la búsqueda aparecerán en una lista debajo de la barra de consulta.
-4) Si el resultado de la busqueda excede el alto de la ventana, se puede usar la rueda del
+3) Hacer clic en el Botón Consulta o bien, tocar la tecla Enter o la tecla Intro.
+4) Los resultados de la búsqueda aparecerán en una lista debajo de la barra de consulta.
+5) Si el resultado de la busqueda excede el alto de la ventana, se puede usar la rueda del
    mouse para desplazar el texto. También es posible lograr esto mismo usando las flechas
    arriba y abajo. PageDown/Up mueven la lista de a tres filas en lugar de 1.
 

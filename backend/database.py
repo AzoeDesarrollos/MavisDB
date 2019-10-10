@@ -71,6 +71,38 @@ def process_sd_dist(ruta):
     return table
 
 
+def process_ivrea(ruta):
+    tabla = []
+    for row in read_csv(ruta)[9:]:
+        if row[2] != '':
+            tabla.append({
+                'codigo': row[1],
+                'nombre': row[2].lstrip().rstrip(),
+                'isbn': row[3],
+                'ean': row[4].lstrip().rstrip(),
+                'adendum': row[5],
+                'precio': float(row[6].replace(',', '.').strip(' $')),
+                'agotado': 1 if len(row[8]) else 0
+                })
+    return tabla
+
+
+def process_plan(ruta):
+    tabla = []
+    for row in read_csv(ruta)[9:]:
+        if row[0] != '':
+            t = row[3].lstrip().rstrip().split(' - ')[0] if 'Sin Stock' in row[3].title() else row[3].lstrip().rstrip()
+            tabla.append({
+                'codigo': row[0],
+                'nombre': t,
+                'isbn': row[2],
+                'precio': float(row[4].replace(',', '.').strip(' $')),
+                'agotado': 1 if 'Sin Stock' in row[3].title() else 0
+                })
+
+    return tabla
+
+
 def open_table(ruta):
     tabla = []
     datos = read_csv(ruta)
@@ -92,13 +124,18 @@ def open_table(ruta):
     return tabla
 
 
-root = getcwd()+'/data'
+root = getcwd() + '/data'
 tablas = []
 for file in listdir(root):
+    route = path.join(root, file)
     if 'Devir' in file:
-        tablas.append(process_devir(path.join(root, file)))
+        tablas.append(process_devir(route))
     elif 'SD' in file:
-        tablas.append(process_sd_dist(path.join(root, file)))
+        tablas.append(process_sd_dist(route))
+    elif 'IVREA' in file:
+        tablas.append(process_ivrea(route))
+    elif 'Plan' in file:
+        tablas.append(process_plan(route))
 
 __all__ = [
     'tablas'
