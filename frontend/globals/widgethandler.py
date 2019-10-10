@@ -26,8 +26,8 @@ class WidgetHandler:
 
     @classmethod
     def update(cls):
-        cls.clock.tick(30)
-        events = event.get([KEYDOWN, MOUSEBUTTONDOWN, QUIT])
+        cls.clock.tick(60)
+        events = event.get([KEYDOWN, MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT])
         event.clear()
         for e in events:
             if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
@@ -50,7 +50,9 @@ class WidgetHandler:
                     cls.active = w
 
             elif e.type == MOUSEBUTTONUP:
-                pass
+                widgets = [i for i in cls.contents.sprites() if i.rect.collidepoint(e.pos)]
+                for w in widgets:
+                    w.on_mousebuttonup(e.button)
 
             elif e.tyoe == MOUSEMOTION:
                 pass

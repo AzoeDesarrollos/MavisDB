@@ -1,5 +1,5 @@
 from pygame import Surface, font, key, draw, K_LSHIFT, K_RSHIFT, KMOD_CAPS
-from pygame import K_0, K_2, K_3, K_4, K_5, K_6, K_8, K_9
+from pygame import K_0, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9
 from backend.eventhandler import EventHandler
 from backend.event_functions import select_many
 # from backend.levenshtein import probar_input
@@ -52,11 +52,11 @@ class Entry(BaseWidget):
 
         string = ''
         for item in selection:
-            string += item['nombre']+':'
+            string += item['nombre'].title()+':'
             if self.status_precio:
                 string += ' Precio: $'+str(item['precio'])
             if self.status_isbn:
-                string += ' ISBN: '+item.get('ISBN','-')
+                string += ' ISBN: '+item.get('ISBN', '-')
             string += '\n'
 
         EventHandler.trigger('show_text', 'input', {'label': 'precio', 'text': string})
@@ -87,6 +87,8 @@ class Entry(BaseWidget):
                     name = '%'
                 elif tecla == K_6:
                     name = '&'
+                elif tecla == K_7:
+                    name = '•'
                 elif tecla == K_8:
                     name = '('
                 elif tecla == K_9:

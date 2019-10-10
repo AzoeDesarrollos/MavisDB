@@ -11,6 +11,7 @@ class Label(BaseWidget):
 
     def __init__(self, name, text, x, y, w, h=0, size=16):
         self.x, self.y = x, y
+        self._h = h
         self.text = text
         self.name = name
         self.f = font.SysFont('Verdana', size)
@@ -52,7 +53,11 @@ class Label(BaseWidget):
             self.scroll_y += direction
 
     def update(self):
-        self.image.fill(COLOR_FONDO)
         self.render = render_textrect(self.text, self.f, self.w, COLOR_TEXTO, COLOR_FONDO)
+        if self._h == 0:
+            self.h = self.render.get_rect().h
+            self.image = Surface((self.w, self.h))
+
+        self.image.fill(COLOR_FONDO)
         self.image.blit(self.render, (0, self.scroll_y))
         self.dirty = 1

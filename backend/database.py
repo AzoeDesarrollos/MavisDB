@@ -31,7 +31,7 @@ def process_devir(ruta):
 
         tabla.append({
             'codigo': j,
-            'nombre': row[0],
+            'nombre': row[0].upper(),
             'precio_siva': row[1],
             'precio': row[2],
             'pedido': row[3] if row[3] is not '' else None,
@@ -59,7 +59,7 @@ def process_sd_dist(ruta):
                 row[i] = int(value[:value.index('%')])
         table.append({
             'codigo': row[0],
-            'nombre': row[1],
+            'nombre': row[1].upper(),
             'precio': row[2],
             'decuento': row[3],
             'ISBN': row[4],
