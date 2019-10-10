@@ -2,7 +2,7 @@ from frontend import Renderer, WidgetHandler, COLOR_FONDO, COLOR_TEXTO
 from frontend.globals.textrect import render_textrect
 from backend.eventhandler import EventHandler
 from .basewidget import BaseWidget
-from pygame import font, Rect, K_DOWN, K_UP, Surface
+from pygame import font, Rect, K_DOWN, K_UP, Surface, K_PAGEDOWN, K_PAGEUP
 
 
 class Label(BaseWidget):
@@ -33,6 +33,7 @@ class Label(BaseWidget):
 
     def show(self, event):
         if event.data['label'] == self.name:
+            WidgetHandler.set_active(self)
             self.text = event.data.get('text')
 
     def on_keydown(self, key):
@@ -40,6 +41,10 @@ class Label(BaseWidget):
             self.scroll(-21)
         elif key == K_UP:
             self.scroll(+21)
+        elif key == K_PAGEDOWN:
+            self.scroll(-21 * 3)
+        elif key == K_PAGEUP:
+            self.scroll(+21 * 3)
 
     def on_mousebuttondown(self, button):
         if button == 5:  # down

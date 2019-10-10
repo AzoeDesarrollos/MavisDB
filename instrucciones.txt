@@ -1,0 +1,23 @@
+Instrucciones sobre el uso de este programa:
+1) Ingresar el nombre del objeto buscado en la barra de consulta. Puede ingresarse un nombre
+   completo, o parte del mismo.
+2) Hacer clic en el Botón Consulta o bien, tocar la tecla Enter o la tecla Intro.
+3) Los resultados de la búsqueda aparecerán en una lista debajo de la barra de consulta.
+4) Si el resultado de la busqueda excede el alto de la ventana, se puede usar la rueda del
+   mouse para desplazar el texto. También es posible lograr esto mismo usando las flechas
+   arriba y abajo. PageDown/Up mueven la lista de a tres filas en lugar de 1.
+
+Opciones:
+Las cajas de verificacion (checkboxes) permiten que el buscador devuelva los resultados
+pedidos (ya sea precio o ISBN). Si se ha realizado una búsqueda por precio, y también se
+quiere el ISBN, debe repetirse la búsqueda. Simplemente marque la casilla "ISBN" y toque
+de nuevo en el botón Consultar.
+
+Sobre la barra de consulta:
+- La combinación Shift+7 ingresa el carácter "•". Otras combinaciones con shfit son
+  estándar.
+- La tecla Suprimir no funciona, solo es posible borrar hacia atrás usando Backspace.
+- Por lo anterior, el cursor de la barra de consulta siempre está al final del texto.
+- La tecla Escape cierra el programa.
+- El botón "Consulta" no funciona si la bara de consulta "Producto" está vacío.
+

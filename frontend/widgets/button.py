@@ -6,8 +6,8 @@ from frontend import Renderer, WidgetHandler
 class Button(BaseWidget):
     action = None
 
-    def __init__(self, x, y, texto, action=None):
-        self.f = font.SysFont('Verdana', 16)
+    def __init__(self, x, y, texto, action=None, font_size=16):
+        self.f = font.SysFont('Verdana', font_size)
         self.img_unp = self.crear(texto, (0, 0, 0))
         self.img_pre = self.crear(texto, (255, 255, 255))
         self.image = self.img_unp
@@ -26,9 +26,9 @@ class Button(BaseWidget):
         return image
 
     def on_mousebuttondown(self, button):
-        if button == 1 and self.action is not None:
+        if button == 1:
             self.image = self.img_pre
-            self.action()
+            self.action() if self.action is not None else None
 
     def on_mousebuttonup(self, button):
         if button == 1:

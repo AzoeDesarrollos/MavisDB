@@ -25,6 +25,13 @@ class WidgetHandler:
         cls.contents.remove(widget)
 
     @classmethod
+    def set_active(cls, widdget):
+        for wdg in cls.contents:
+            wdg.active = False
+        widdget.active = True
+        cls.active = widdget
+
+    @classmethod
     def update(cls):
         cls.clock.tick(60)
         events = event.get([KEYDOWN, MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT])

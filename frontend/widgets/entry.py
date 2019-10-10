@@ -42,13 +42,12 @@ class Entry(BaseWidget):
 
     def button_trigger(self):
         nombre = ''.join(self.input).upper()
-        selection = []
         columns = []
         if self.status_precio:
             columns.append('precio')
         if self.status_isbn:
             columns.append('ISBN')
-        selection.extend(select_many(nombre, 'nombre', columns))
+        selection = select_many(nombre, 'nombre', columns) if len(self.input) > 0 else []
 
         string = ''
         for item in selection:
@@ -71,8 +70,6 @@ class Entry(BaseWidget):
             self.del_character()
         elif name == 'enter' or name == 'return':
             self.button_trigger()
-        elif tecla in (K_LSHIFT, K_RSHIFT):
-            pass
         elif name.isdecimal():
             if shift:
                 if tecla == K_0:
@@ -94,8 +91,12 @@ class Entry(BaseWidget):
                 elif tecla == K_9:
                     name = ')'
             self.input_character(name)
-        elif name.isalpha:
+        elif name.isalpha and len(name) == 1:
             if shift:
+                if name == '.':
+                    name = ':'
+                if name == ',':
+                    name = ';'
                 name = name.upper()
             self.input_character(name)
 
