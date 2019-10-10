@@ -1,5 +1,5 @@
-from .resources import read_cvs, is_empty, trim
-from os import path, getcwd
+from .resources import read_csv, is_empty, trim
+from os import path, getcwd, listdir
 
 
 def process_devir(ruta):
@@ -73,29 +73,32 @@ def process_sd_dist(ruta):
 
 def open_table(ruta):
     tabla = []
-    datos = read_cvs(ruta)
+    datos = read_csv(ruta)
     header = datos[0]
     rows = datos[1:]
     for i, row in enumerate(rows):
         tabla.append({})
         for j, value in enumerate(row):
-                head = header[j]
-                if head == 'codigo' :
-                    try:
-                        value = int(value)
-                    except ValueError:
-                        # sd_dist codes are not numeric.
-                        pass
-                elif head in ('precio','precio_siva', 'descuento'):
-                    value = float(value)
-                tabla[i].update({header[j]:value})
+            head = header[j]
+            if head == 'codigo':
+                try:
+                    value = int(value)
+                except ValueError:
+                    # sd_dist codes are not numeric.
+                    pass
+            elif head in ('precio', 'precio_siva', 'descuento'):
+                value = float(value)
+            tabla[i].update({header[j]: value})
     return tabla
 
 
-tablas = {
-    'devir': process_devir(path.join(getcwd(), 'data/Lista_de_Precios_Devirb.csv')),
-    'sd_dist': process_sd_dist(path.join(getcwd(), 'data/LISTADO_SD_DISTRIBUCIONES_19_07_2019b.csv'))
-    }
+root = getcwd()+'/data'
+tablas = []
+for file in listdir(root):
+    if 'Devir' in file:
+        tablas.append(process_devir(path.join(root, file)))
+    elif 'SD' in file:
+        tablas.append(process_sd_dist(path.join(root, file)))
 
 __all__ = [
     'tablas'

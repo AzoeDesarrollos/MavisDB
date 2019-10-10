@@ -8,9 +8,9 @@ class Button(BaseWidget):
 
     def __init__(self, x, y, texto, action=None):
         self.f = font.SysFont('Verdana', 16)
-        imagen = self.crear(texto)
-        rect = imagen.get_rect(topleft=(x, y))
-        super().__init__(imagen, rect)
+        self.image = self.crear(texto)
+        self.rect = self.image.get_rect(topleft=(x, y))
+        super().__init__()
         Renderer.add_widget(self, 1)
         WidgetHandler.add_widget(self, 1)
         self.action = action

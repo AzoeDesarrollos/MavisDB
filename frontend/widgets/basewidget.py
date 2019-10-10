@@ -4,10 +4,9 @@ from pygame.sprite import DirtySprite
 class BaseWidget(DirtySprite):
     active = False
 
-    def __init__(self, image, rect):
+    def __init__(self, parent=None):
         super().__init__()
-        self.image = image
-        self.rect = rect
+        self.parent = parent
 
     def on_keydown(self, key):
         pass

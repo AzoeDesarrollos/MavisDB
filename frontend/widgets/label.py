@@ -9,15 +9,24 @@ class Label(BaseWidget):
     render = None
     scroll_y = 0
 
-    def __init__(self, name, text, x, y):
+    def __init__(self, name, text, x, y, w, h=0, size=16):
         self.x, self.y = x, y
-        self.name = name
-        rect = Rect(self.x, self.y, 640, 480 - y)
-        self.w, self.h = rect.size
-        self.f = font.SysFont('Verdana', 16)
         self.text = text
+        self.name = name
+        self.f = font.SysFont('Verdana', size)
+        if self.text != '':
+            self.render = render_textrect(self.text, self.f, w, COLOR_TEXTO, COLOR_FONDO)
+            self.w, self.h = self.render.get_size()
+            self.rect = self.render.get_rect(topleft=(x, y))
+            self.image = Surface(self.rect.size)
+            self.image.blit(self.render, (0, self.scroll_y))
+        else:
+            self.w, self.h = w, h
+            self.image = Surface((self.w, self.h))
+            self.rect = Rect(self.x, self.y, self.w, self.h)
+
         EventHandler.register(self.show, 'show_text')
-        super().__init__(Surface(rect.size), rect)
+        super().__init__()
         Renderer.add_widget(self, 1)
         WidgetHandler.add_widget(self, 1)
 

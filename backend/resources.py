@@ -3,9 +3,9 @@ from pygame import quit
 from sys import exit
 import csv
 
+
 class MyCSV(csv.excel):
     delimiter = ';'
-csv.register_dialect('MyCSV',MyCSV)
 
 
 def read_csv(ruta):
@@ -25,7 +25,7 @@ def read_csv(ruta):
 def write_csv(ruta, tabla):
     with open(ruta, 'w+t', newline='') as csvfile:
         fieldnames = list(tabla[0].keys())
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames,dialect=MyCSV)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, dialect=MyCSV)
         writer.writeheader()
         writer.writerows(tabla)
 

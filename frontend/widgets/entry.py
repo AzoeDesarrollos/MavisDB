@@ -15,28 +15,49 @@ class Entry(BaseWidget):
     ticks = 0
     active = True
 
+    status_precio = True
+    status_isbn = False
+
     def __init__(self, x, y):
         self.f = font.SysFont('Verdana', 16)
         self.empty_f = font.SysFont('Verdana', 16, italic=True)
         self.w, self.h = 310, 23
-        image = Surface((self.w, self.h))
-        image.fill(self.color_fondo, (1, 1, self.w - 2, self.h - 2))
-        rect = image.get_rect(topleft=(x, y))
-        super().__init__(image, rect)
+        self.image = Surface((self.w, self.h))
+        self.image.fill(self.color_fondo, (1, 1, self.w - 2, self.h - 2))
+        self.rect = self.image.get_rect(topleft=(x, y))
+        super().__init__()
         Renderer.add_widget(self, 1)
         WidgetHandler.add_widget(self, 1)
+        EventHandler.register(self.update_status, 'check')
 
         self.input = []
 
+    def update_status(self, event):
+        name = event.data['name']
+        status = event.data['status']
+        if name == 'precio':
+            self.status_precio = status
+        elif name == 'isbn':
+            self.status_isbn = status
+
     def button_trigger(self):
         nombre = ''.join(self.input).upper()
-        selection = select_many('precio', nombre, 'nombre')
+        selection = []
+        columns = []
+        if self.status_precio:
+            columns.append('precio')
+        if self.status_isbn:
+            columns.append('ISBN')
+        selection.extend(select_many(nombre, 'nombre', columns))
+
         string = ''
-        if len(selection) == 1:
-            string = selection[0]['nombre']+': $'+str(selection[0]['precio'])
-        else:
-            for item in selection:
-                string += item['nombre']+': $'+str(item['precio'])+'\n'
+        for item in selection:
+            string += item['nombre']+':'
+            if self.status_precio:
+                string += ' Precio: $'+str(item['precio'])
+            if self.status_isbn:
+                string += ' ISBN: '+item.get('ISBN','-')
+            string += '\n'
 
         EventHandler.trigger('show_text', 'input', {'label': 'precio', 'text': string})
 
