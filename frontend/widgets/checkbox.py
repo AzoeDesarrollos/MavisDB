@@ -20,8 +20,8 @@ class Checkbox(BaseWidget):
             self.image = self.img_false
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
-        Renderer.add_widget(self, 1)
-        WidgetHandler.add_widget(self, 1)
+        Renderer.add_widget(self)
+        WidgetHandler.add_widget(self)
         EventHandler.trigger('check', self, {'name': self.nombre, 'status': self.state})
 
     @staticmethod

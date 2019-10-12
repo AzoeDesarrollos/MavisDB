@@ -20,7 +20,7 @@ class Renderer:
         cls.contents = LayeredDirty()
 
     @classmethod
-    def add_widget(cls, widget, layer):
+    def add_widget(cls, widget, layer=1):
         cls.contents.add(widget, layer=layer)
 
     @classmethod

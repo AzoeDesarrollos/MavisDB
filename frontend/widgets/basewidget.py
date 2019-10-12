@@ -26,5 +26,5 @@ class BaseWidget(DirtySprite):
     def on_mouseover(self):
         pass
 
-    def update(self):
+    def update(self, *args, **kwargs):
         pass

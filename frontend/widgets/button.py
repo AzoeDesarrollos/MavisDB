@@ -13,8 +13,8 @@ class Button(BaseWidget):
         self.image = self.img_unp
         self.rect = self.image.get_rect(topleft=(x, y))
         super().__init__()
-        Renderer.add_widget(self, 1)
-        WidgetHandler.add_widget(self, 1)
+        Renderer.add_widget(self)
+        WidgetHandler.add_widget(self)
         self.action = action
 
     def crear(self, texto, color_texto):

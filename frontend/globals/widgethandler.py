@@ -15,10 +15,8 @@ class WidgetHandler:
         cls.clock = time.Clock()
 
     @classmethod
-    def add_widget(cls, widget, layer):
+    def add_widget(cls, widget, layer=1):
         cls.contents.add(widget, layer=layer)
-        if widget.active:
-            cls.active = widget
 
     @classmethod
     def del_widget(cls, widget):

@@ -13,7 +13,6 @@ class Entry(BaseWidget):
     color_texto = 0, 0, 0
     lenght = 0
     ticks = 0
-    active = True
 
     status_precio = True
     status_isbn = False
@@ -26,8 +25,9 @@ class Entry(BaseWidget):
         self.image.fill(self.color_fondo, (1, 1, self.w - 2, self.h - 2))
         self.rect = self.image.get_rect(topleft=(x, y))
         super().__init__()
-        Renderer.add_widget(self, 1)
-        WidgetHandler.add_widget(self, 1)
+        Renderer.add_widget(self)
+        WidgetHandler.add_widget(self)
+        WidgetHandler.set_active(self)
         EventHandler.register(self.update_status, 'check')
 
         self.input = []
@@ -58,7 +58,7 @@ class Entry(BaseWidget):
                 string += ' ISBN: '+item.get('ISBN', '-')
             string += '\n'
 
-        EventHandler.trigger('show_text', 'input', {'label': 'precio', 'text': string})
+        EventHandler.trigger('show_text', 'input', {'text': string})
 
     def on_keydown(self, tecla):
         mods = key.get_mods()
