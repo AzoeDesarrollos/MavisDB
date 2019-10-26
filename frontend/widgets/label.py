@@ -46,7 +46,9 @@ class LabelList(BaseWidget):
     def show(self, event):
         self.clear()
         WidgetHandler.set_active(self)
-        self.fill(event.data.get('text'))
+        text = event.data.get('text')
+        if len(text):
+            self.fill(text)
 
     def clear(self):
         for item in self.items:
@@ -324,3 +326,6 @@ class CartedItem(LabelListItem):
         suspense = '.' * (max_len - (factor + len(p)))
         compressed = compressed[0:factor] + suspense + p
         return compressed
+
+    def __repr__(self):
+        return self.item.__repr__()

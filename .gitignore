@@ -1,6 +1,7 @@
 /.idea/
 /__pycache__/
 /data
+/ventas/
 /setup.py
 /icon.ico
 /icon.png

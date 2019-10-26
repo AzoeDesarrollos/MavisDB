@@ -1,6 +1,7 @@
 from .eventhandler import EventHandler
 from pygame import quit
 from sys import exit
+from datetime import datetime
 import csv
 import os
 
@@ -55,3 +56,9 @@ EventHandler.register(salir_handler, 'salir')
 
 if 'data' not in os.listdir(os.getcwd()):
     os.mkdir(os.path.join(os.getcwd(), 'data'))
+
+now = datetime.now()
+year = str(now.year)
+month = str(now.month)
+if not os.path.exists(os.path.join(os.getcwd(), 'ventas', year, month)):
+    os.makedirs(os.path.join(os.getcwd(), 'ventas', year, month))

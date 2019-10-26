@@ -1,7 +1,7 @@
 from pygame import Surface, font, key, draw, K_LSHIFT, K_RSHIFT, KMOD_CAPS
 from pygame import K_0, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9
 from backend.eventhandler import EventHandler
-from backend.event_functions import select_many
+from backend.database import select_many
 # from backend.levenshtein import probar_input
 from frontend import Renderer, WidgetHandler
 from .basewidget import BaseWidget
