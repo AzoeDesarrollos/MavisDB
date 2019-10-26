@@ -42,12 +42,8 @@ class Checkbox(BaseWidget):
             self.image = self.img_true
         else:
             self.image = self.img_false
-        self.dirty = 1
 
         EventHandler.trigger('check', self, {'name': self.nombre, 'status': self.state})
 
     def on_mousebuttondown(self, button):
         self.check()
-
-    def update(self):
-        self.dirty = 1

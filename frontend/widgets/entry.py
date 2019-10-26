@@ -125,7 +125,6 @@ class Entry(BaseWidget):
 
         if self.rect.contains(rr):
             self.image.blit(r, (1, 1))
-            self.dirty = 1
 
         if 10 < self.ticks < 30 and self.active:
             draw.aaline(self.image, self.color_texto, (rr.right - self.rect.x + 2, 3), (rr.right - 80 + 2, self.h - 3))

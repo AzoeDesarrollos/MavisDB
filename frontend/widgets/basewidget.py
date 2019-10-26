@@ -1,7 +1,7 @@
-from pygame.sprite import DirtySprite
+from pygame.sprite import Sprite
 
 
-class BaseWidget(DirtySprite):
+class BaseWidget(Sprite):
     active = False
 
     def __init__(self, parent=None):

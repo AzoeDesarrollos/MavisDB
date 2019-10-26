@@ -1,7 +1,7 @@
 from pygame import event, QUIT, KEYDOWN, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from pygame import K_ESCAPE, time, mouse
 from backend.eventhandler import EventHandler
-from pygame.sprite import LayeredDirty
+from pygame.sprite import LayeredUpdates
 
 
 class WidgetHandler:
@@ -11,7 +11,7 @@ class WidgetHandler:
 
     @classmethod
     def init(cls):
-        cls.contents = LayeredDirty()
+        cls.contents = LayeredUpdates()
         cls.clock = time.Clock()
 
     @classmethod

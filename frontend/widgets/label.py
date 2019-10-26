@@ -24,7 +24,6 @@ class Label(BaseWidget):
     def update_text(self, text, just=0):
         self.image = render_textrect(text, self.f, self.w, COLOR_TEXTO, COLOR_FONDO, just)
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
-        self.dirty = 1
 
 
 class LabelList(BaseWidget):
@@ -61,7 +60,7 @@ class LabelList(BaseWidget):
             item = LabelListItem(self, text, self.y + self.h, self.text_h)
             self.h += item.h
             self.items.append(item)
-        self.dirty = 1
+        self.image = Surface((self.w, self.h))
 
     def on_keydown(self, tecla):
         if tecla == K_DOWN:
@@ -87,11 +86,9 @@ class LabelList(BaseWidget):
 
         for item in self.items:
             if item.y < self.y:
-                Renderer.del_widget(item)
-                WidgetHandler.del_widget(item)
+                item.hide()
             else:
-                Renderer.add_widget(item)
-                WidgetHandler.add_widget(item)
+                item.show()
 
     def deselegir_todo(self):
         for item in self.items:
@@ -120,7 +117,6 @@ class LabelList(BaseWidget):
 
     def update(self):
         self.image.fill(COLOR_FONDO)
-        self.dirty = 1
 
 
 class LabelListItem(BaseWidget):
@@ -167,19 +163,24 @@ class LabelListItem(BaseWidget):
     def scroll(self, dy):
         self.rect.move_ip(0, dy)
         self.y += dy
-        self.dirty = 1
 
     def ser_elegido(self):
         self.image = self.img_sel
         self.is_selected = True
         self.parent.select(self)
-        self.dirty = 1
 
     def ser_deselegido(self):
         self.image = self.img_uns
         self.is_selected = False
         self.parent.deselect(self)
-        self.dirty = 1
+
+    def show(self):
+        Renderer.add_widget(self)
+        WidgetHandler.add_widget(self)
+
+    def hide(self):
+        Renderer.del_widget(self)
+        WidgetHandler.del_widget(self)
 
 
 class Item:
@@ -238,7 +239,7 @@ class CartableLabelList(LabelList):
             self.h += item.h
             self.items.append(item)
         self.image = Surface((self.w, self.h))
-        self.dirty = 1
+        self.salto_de_linea = self.items[0].fuente.get_height()
 
 
 class CartableLabelListItem(LabelListItem):
@@ -268,6 +269,15 @@ class CartableLabelListItem(LabelListItem):
 
     def ser_deselegido(self):
         super().ser_deselegido()
+        self.sell_button.hide()
+
+    def scroll(self, dy):
+        self.rect.move_ip(0, dy)
+        self.sell_button.rect.move_ip(0, dy)
+        self.y += dy
+
+    def hide(self):
+        super().hide()
         self.sell_button.hide()
 
 

@@ -44,6 +44,3 @@ class Button(BaseWidget):
 
     def on_mouseover(self):
         pass
-
-    def update(self):
-        self.dirty = 1
