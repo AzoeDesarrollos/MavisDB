@@ -2,8 +2,9 @@ from frontend import Renderer, WidgetHandler, COLOR_FONDO, COLOR_TEXTO, ALTO
 from frontend.globals.textrect import render_textrect
 from backend.eventhandler import EventHandler
 from .basewidget import BaseWidget
+from pygame.sprite import Group
 from pygame import font, Rect, Surface, key
-from pygame import KMOD_RCTRL, KMOD_LCTRL, K_PAGEDOWN, K_PAGEUP, K_DOWN, K_UP
+from pygame import KMOD_LCTRL, KMOD_CTRL, K_RSHIFT, K_LSHIFT, K_PAGEDOWN, K_PAGEUP, K_DOWN, K_UP
 
 
 class Label(BaseWidget):
@@ -23,12 +24,14 @@ class LabelList(BaseWidget):
     render = None
     scroll_y = 0
     items = None
+    selected_items = None
 
     def __init__(self, x, y, w):
         self.x, self.y, self.w, self.h = x, y, w, 0
         self.rect = Rect(self.x, self.y, self.w, self.h)
         self.image = Surface(self.rect.size)
         self.items = []
+        self.selected_items = Group()
         super().__init__()
         EventHandler.register(self.show, 'show_text')
         WidgetHandler.add_widget(self, 1)
@@ -86,6 +89,27 @@ class LabelList(BaseWidget):
         for item in self.items:
             item.ser_deselegido()
 
+    def select(self, item):
+        self.selected_items.add(item)
+
+    def deselect(self, item):
+        self.selected_items.remove(item)
+
+    def select_many(self, item):
+        if len(self.items):
+            a = self.items.index(self.selected_items.sprites()[0])
+            b = self.items.index(item)
+
+            if a < b:
+                lo = a
+                hi = b
+            else:
+                hi = a
+                lo = b
+
+            for item in self.items[lo:hi]:
+                item.ser_elegido()
+
     def update(self):
         self.image.fill(COLOR_FONDO)
         self.dirty = 1
@@ -109,11 +133,16 @@ class LabelListItem(BaseWidget):
 
     def on_mousebuttondown(self, button):
         mods = key.get_mods()
-        ctrl = mods & KMOD_LCTRL or mods & KMOD_RCTRL
+        ctrl = mods & KMOD_CTRL or mods & KMOD_LCTRL
+        shift = mods & K_LSHIFT or mods & K_RSHIFT
         if button == 1 and self.is_selected:
-            self.ser_deselegido()
+            self.parent.deselegir_todo()
+            self.ser_elegido()
         elif button == 1 and not self.is_selected:
-            if not ctrl:
+            if shift:
+                self.ser_elegido()
+                self.parent.select_many(self)
+            elif not ctrl:
                 self.parent.deselegir_todo()
             self.ser_elegido()
         else:
@@ -130,9 +159,11 @@ class LabelListItem(BaseWidget):
     def ser_elegido(self):
         self.image = self.img_sel
         self.is_selected = True
+        self.parent.select(self)
         self.dirty = 1
 
     def ser_deselegido(self):
         self.image = self.img_uns
         self.is_selected = False
+        self.parent.deselect(self)
         self.dirty = 1
