@@ -1,6 +1,6 @@
 from .button import Button
 from .entry import Entry
-from .label import Label, LabelList
+from .label import Label, LabelList, CartableLabelList
 from .checkbox import Checkbox
 
 __all__ = [
@@ -8,5 +8,6 @@ __all__ = [
     'Entry',
     'Label',
     'Checkbox',
-    'LabelList'
+    'LabelList',
+    'CartableLabelList'
     ]

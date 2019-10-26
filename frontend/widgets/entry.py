@@ -48,22 +48,13 @@ class Entry(BaseWidget):
         if self.status_isbn:
             columns.append('ISBN')
         selection = select_many(nombre, 'nombre', columns) if len(self.input) > 0 else []
-
-        string = ''
-        for item in selection:
-            string += item['nombre'].title()+':'
-            if self.status_precio:
-                string += ' Precio: $'+str(item['precio'])
-            if self.status_isbn:
-                string += ' ISBN: '+item.get('ISBN', '-')
-            string += '\n'
-
-        EventHandler.trigger('show_text', 'input', {'text': string})
+        EventHandler.trigger('show_text', 'input', {'text': selection})
 
     def on_keydown(self, tecla):
         mods = key.get_mods()
         shift = mods & K_LSHIFT or mods & K_RSHIFT or mods & KMOD_CAPS
         name = key.name(tecla).strip('[]')
+        self.activate()
         if name == 'space':
             self.input_character(' ')
         elif name == 'backspace':
@@ -102,7 +93,7 @@ class Entry(BaseWidget):
 
     def on_mousebuttondown(self, button):
         if button == 1:
-            self.active = True
+            self.activate()
 
     def input_character(self, char):
         self.input.append(char)
@@ -120,10 +111,14 @@ class Entry(BaseWidget):
             t = ''.join(self.input)
             color = self.color_texto
             fuente = self.f
-        else:
+        elif not self.active:
             t = 'Ingrese el nombre de un producto'
             color = 125, 125, 125
             fuente = self.empty_f
+        else:
+            t = ''
+            color = self.color_texto
+            fuente = self.f
 
         r = fuente.render(t, 1, color, self.color_fondo)
         rr = r.get_rect(topleft=(self.rect.x + 1, self.rect.y + 1))
@@ -132,7 +127,7 @@ class Entry(BaseWidget):
             self.image.blit(r, (1, 1))
             self.dirty = 1
 
-        if 10 < self.ticks < 30 and len(self.input) and self.active:
-            draw.aaline(self.image, self.color_texto, (rr.right-self.rect.x + 2, 3), (rr.right-80 + 2, self.h - 3))
+        if 10 < self.ticks < 30 and self.active:
+            draw.aaline(self.image, self.color_texto, (rr.right - self.rect.x + 2, 3), (rr.right - 80 + 2, self.h - 3))
         elif self.ticks > 40:
             self.ticks = 0

@@ -1,4 +1,4 @@
-from pygame import event, QUIT, KEYDOWN, KEYUP, MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
+from pygame import event, QUIT, KEYDOWN, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from pygame import K_ESCAPE, time, mouse
 from backend.eventhandler import EventHandler
 from pygame.sprite import LayeredDirty
@@ -23,11 +23,12 @@ class WidgetHandler:
         cls.contents.remove(widget)
 
     @classmethod
-    def set_active(cls, widdget):
+    def set_active(cls, widget):
         for wdg in cls.contents:
-            wdg.active = False
-        widdget.active = True
-        cls.active = widdget
+            wdg.deactivate()
+        # no se activa al widget per se adrede.
+        # de esta manera Entry se comporta como debería.
+        cls.active = widget
 
     @classmethod
     def update(cls):
@@ -42,13 +43,9 @@ class WidgetHandler:
                 if cls.active is not None:
                     cls.active.on_keydown(e.key)
 
-            elif e.type == KEYUP:
-                if cls.active is not None:
-                    cls.active.on_keyup(e.key)
-
             elif e.type == MOUSEBUTTONDOWN:
                 for wig in cls.contents:
-                    wig.active = False
+                    wig.deactivate()
                 widgets = [i for i in cls.contents.sprites() if i.rect.collidepoint(e.pos)]
                 for w in widgets:
                     w.on_mousebuttondown(e.button)
@@ -58,9 +55,6 @@ class WidgetHandler:
                 widgets = [i for i in cls.contents.sprites() if i.rect.collidepoint(e.pos)]
                 for w in widgets:
                     w.on_mousebuttonup(e.button)
-
-            elif e.tyoe == MOUSEMOTION:
-                pass
 
         x, y = mouse.get_pos()
         for widget in cls.contents.sprites():

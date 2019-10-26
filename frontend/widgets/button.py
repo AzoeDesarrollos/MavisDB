@@ -13,8 +13,8 @@ class Button(BaseWidget):
         self.image = self.img_unp
         self.rect = self.image.get_rect(topleft=(x, y))
         super().__init__()
-        Renderer.add_widget(self)
         WidgetHandler.add_widget(self)
+        self.show()
         self.action = action
 
     def crear(self, texto, color_texto):
@@ -33,6 +33,14 @@ class Button(BaseWidget):
     def on_mousebuttonup(self, button):
         if button == 1:
             self.image = self.img_unp
+
+    def show(self):
+        Renderer.add_widget(self)
+        # WidgetHandler.add_widget(self)
+
+    def hide(self):
+        Renderer.del_widget(self)
+        # WidgetHandler.del_widget(self)
 
     def on_mouseover(self):
         pass
