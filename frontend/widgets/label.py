@@ -11,15 +11,20 @@ from pygame import K_PAGEDOWN, K_PAGEUP, K_DOWN, K_UP
 
 class Label(BaseWidget):
 
-    def __init__(self, text, x, y, w, size=16):
-        self.x, self.y = x, y
+    def __init__(self, text, x, y, w, size=16, just=0):
+        self.x, self.y, self.w, = x, y, w
         self.f = font.SysFont('Verdana', size)
-        self.image = render_textrect(text, self.f, w, COLOR_TEXTO, COLOR_FONDO)
+        self.image = render_textrect(text, self.f, w, COLOR_TEXTO, COLOR_FONDO, justification=just)
         self.w, self.h = self.image.get_size()
         self.rect = self.image.get_rect(topleft=(x, y))
         super().__init__()
         Renderer.add_widget(self, 1)
         WidgetHandler.add_widget(self, 1)
+
+    def update_text(self, text, just=0):
+        self.image = render_textrect(text, self.f, self.w, COLOR_TEXTO, COLOR_FONDO, just)
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+        self.dirty = 1
 
 
 class LabelList(BaseWidget):
@@ -37,7 +42,6 @@ class LabelList(BaseWidget):
         self.items = []
         self.selected_items = Group()
         super().__init__()
-        EventHandler.register(self.show, 'show_text')
         WidgetHandler.add_widget(self, 1)
 
     def show(self, event):
@@ -54,10 +58,9 @@ class LabelList(BaseWidget):
 
     def fill(self, texts):
         for text in texts:
-            item = LabelListItem(self, text, self.y+self.h, self.text_h)
+            item = LabelListItem(self, text, self.y + self.h, self.text_h)
             self.h += item.h
             self.items.append(item)
-        self.image = Surface((self.w, self.h))
         self.dirty = 1
 
     def on_keydown(self, tecla):
@@ -185,9 +188,14 @@ class Item:
     isbn = None
 
     def __init__(self, data):
-        self.name = data['nombre']
-        self.price = data.get('precio', 0)
-        self.isbn = data.get('ISBN', None)
+        if type(data) is Item:
+            self.name = data.name
+            self.price = data.price
+            self.isbn = data.isbn
+        else:
+            self.name = data['nombre']
+            self.price = data.get('precio', 0)
+            self.isbn = data.get('ISBN', None)
 
     def shelf(self, precio=True, isbn=False):
         string = self.name.title()
@@ -204,12 +212,29 @@ class Item:
     def __repr__(self):
         return self.name.title()
 
+    def __contains__(self, item):
+        if item == 'precio':
+            return self.price > 0
+        elif item == 'ISBN':
+            return self.isbn is not None
+
 
 class CartableLabelList(LabelList):
+    def __init__(self, x, y, w, text_h=14):
+        super().__init__(x, y, w, text_h)
+        EventHandler.register(self.show, 'show_text')
+
+    def clear(self):
+        for item in self.items:
+            item.on_destruction()
+            Renderer.del_widget(item)
+            WidgetHandler.del_widget(item)
+        self.items.clear()
+        self.h = 0
 
     def fill(self, texts):
         for text in texts:
-            item = CartableLabelListItem(self, text, self.y+self.h)
+            item = CartableLabelListItem(self, text, self.y + self.h)
             self.h += item.h
             self.items.append(item)
         self.image = Surface((self.w, self.h))
@@ -233,6 +258,10 @@ class CartableLabelListItem(LabelListItem):
     def export(self):
         EventHandler.trigger('AddToCart', self.name, {'item': self.item})
 
+    def on_destruction(self):
+        Renderer.del_widget(self.sell_button)
+        WidgetHandler.del_widget(self.sell_button)
+
     def ser_elegido(self):
         super().ser_elegido()
         self.sell_button.show()
@@ -240,3 +269,48 @@ class CartableLabelListItem(LabelListItem):
     def ser_deselegido(self):
         super().ser_deselegido()
         self.sell_button.hide()
+
+
+class Cart(LabelList):
+    def __init__(self, x, y, w):
+        super().__init__(x, y, w, text_h=12)
+        EventHandler.register(self.add, 'AddToCart')
+
+    def add(self, event):
+        item = CartedItem(self, event.data['item'], self.y + self.h, 12)
+        self.h += item.h
+        self.items.append(item)
+        EventHandler.trigger('Subtotal', item.name, {'price': item.item.price})
+
+
+class CartedItem(LabelListItem):
+    def __init__(self, parent, text, y, h):
+        super().__init__(parent, text, y, h)
+        self.item = Item(text)
+        self.name = self.item.name + '.Label'
+
+        self.fuente = font.SysFont('Courier', h)
+        self.altura_del_texto = self.fuente.get_height()
+        texto = self.compress()
+        self.img_sel = render_textrect(texto, self.fuente, parent.w, [255, 255, 255], COLOR_FONDO)
+        self.img_uns = render_textrect(texto, self.fuente, parent.w, [0, 0, 0], COLOR_FONDO)
+        self.image = self.img_uns
+        self.w, self.h = self.image.get_size()
+        self.x, self.y = parent.x, y
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+
+        Renderer.add_widget(self)
+        WidgetHandler.add_widget(self)
+
+    def compress(self):
+        max_len = 36
+        compressed = self.item.name.title()
+        p = '$' + str(self.item.price)
+        if len(compressed) + len(str(self.item.price)) > max_len:
+            factor = len(compressed) // 3
+        else:
+            factor = len(compressed)
+
+        suspense = '.' * (max_len - (factor + len(p)))
+        compressed = compressed[0:factor] + suspense + p
+        return compressed

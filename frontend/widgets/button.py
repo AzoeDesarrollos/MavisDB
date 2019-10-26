@@ -36,11 +36,11 @@ class Button(BaseWidget):
 
     def show(self):
         Renderer.add_widget(self)
-        # WidgetHandler.add_widget(self)
+        WidgetHandler.add_widget(self)
 
     def hide(self):
         Renderer.del_widget(self)
-        # WidgetHandler.del_widget(self)
+        WidgetHandler.del_widget(self)
 
     def on_mouseover(self):
         pass
