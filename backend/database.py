@@ -1,4 +1,5 @@
 from .resources import read_csv, is_empty, trim
+from backend.levenshtein import probar_input, compare_by_lenght
 from os import path, getcwd, listdir
 
 
@@ -138,15 +139,25 @@ for file in listdir(root):
         tablas.append(process_plan(route))
 
 
-def select_many(key, value, columns):
+def select_many(key, columns):
     results = []
     for tabla in tablas:
         for row in tabla:
-            if key in row[value]:
+            if key in row['nombre']:
                 d = {'nombre': row['nombre']}
                 for column in columns:
                     if column in row:
                         d[column] = row[column]
                 results.append(d)
+
+    if not len(results):
+        cercana = {}
+        for tabla in tablas:
+            names = [row['nombre'] for row in tabla]
+            cercana.update(probar_input(key, names))
+
+        for c in compare_by_lenght(key, cercana.pop(min(cercana))):
+            results.extend(select_many(c, columns))
+
     results.sort(key=lambda o: o['nombre'])
     return results

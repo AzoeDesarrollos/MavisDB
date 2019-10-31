@@ -1,8 +1,7 @@
-from pygame import Surface, font, key, draw, K_LSHIFT, K_RSHIFT, KMOD_CAPS
+from pygame import Surface, font, key, draw, KMOD_SHIFT, KMOD_CAPS
 from pygame import K_0, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9
 from backend.eventhandler import EventHandler
 from backend.database import select_many
-# from backend.levenshtein import probar_input
 from frontend import Renderer, WidgetHandler
 from .basewidget import BaseWidget
 
@@ -16,6 +15,8 @@ class Entry(BaseWidget):
 
     status_precio = True
     status_isbn = False
+
+    acento = False
 
     def __init__(self, x, y):
         self.f = font.SysFont('Verdana', 16)
@@ -47,48 +48,61 @@ class Entry(BaseWidget):
             columns.append('precio')
         if self.status_isbn:
             columns.append('ISBN')
-        selection = select_many(nombre, 'nombre', columns) if len(self.input) > 0 else []
+        selection = select_many(nombre, columns) if len(self.input) > 0 else []
         EventHandler.trigger('show_text', 'input', {'text': selection})
 
     def on_keydown(self, tecla):
         mods = key.get_mods()
-        shift = mods & K_LSHIFT or mods & K_RSHIFT or mods & KMOD_CAPS
-        name = key.name(tecla).strip('[]')
-        self.activate()
-        if name == 'space':
+        shift = mods & KMOD_SHIFT or mods & KMOD_CAPS
+        raw = key.name(tecla).strip('[]')
+        name = None
+        if raw == 'space':
             self.input_character(' ')
-        elif name == 'backspace':
+        elif raw == 'backspace':
             self.del_character()
-        elif name == 'enter' or name == 'return':
+        elif raw in ['enter', 'return']:
             self.button_trigger()
-        elif name.isdecimal():
-            if shift:
-                if tecla == K_0:
-                    name = '='
-                elif tecla == K_2:
-                    name = '"'
-                elif tecla == K_3:
-                    name = '#'
-                elif tecla == K_4:
-                    name = '$'
-                elif tecla == K_5:
-                    name = '%'
-                elif tecla == K_6:
-                    name = '&'
-                elif tecla == K_7:
-                    name = '•'
-                elif tecla == K_8:
-                    name = '('
-                elif tecla == K_9:
-                    name = ')'
-            self.input_character(name)
-        elif name.isalpha and len(name) == 1:
-            if shift:
-                if name == '.':
-                    name = ':'
-                if name == ',':
-                    name = ';'
-                name = name.upper()
+        elif raw.isdecimal():
+            if tecla == K_0:
+                name = '=' if shift else raw
+            elif tecla == K_2:
+                name = '"' if shift else raw
+            elif tecla == K_3:
+                name = '#' if shift else raw
+            elif tecla == K_4:
+                name = '$' if shift else raw
+            elif tecla == K_5:
+                name = '%' if shift else raw
+            elif tecla == K_6:
+                name = '&' if shift else raw
+            elif tecla == K_7:
+                name = '•' if shift else raw
+            elif tecla == K_8:
+                name = '(' if shift else raw
+            elif tecla == K_9:
+                name = ')' if shift else raw
+            else:
+                name = raw
+
+        elif raw.isalpha and len(raw) == 1:
+            if raw == '.':
+                name = ':' if shift else raw
+            elif raw == ',':
+                name = ';' if shift else raw
+            elif raw == "'":
+                self.acento = True
+            else:
+                name = raw.upper() if shift else raw
+
+            if self.acento:
+                vowels = 'aeiou'
+                accented_v = 'áéíóú'
+                if raw in vowels:
+                    name = accented_v[vowels.index(raw)]
+                    name = name.upper() if shift else name
+
+        if name is not None:
+            self.acento = False
             self.input_character(name)
 
     def on_mousebuttondown(self, button):
