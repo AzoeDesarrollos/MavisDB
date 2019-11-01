@@ -45,6 +45,16 @@ def trim(line, delete_empty=True, newline=True):
         return [item.strip() for item in line]
 
 
+def trim2(line, delete_empty=True, newline=True):
+
+    if newline:
+        line = [''.join(item.value.splitlines()) if type(item.value) is str else item.value for item in line]
+    if delete_empty:
+        return [item.strip() if type(item) is str and item is None else item for item in line]
+    else:
+        return [item.strip() if type(item) is str else item for item in line]
+
+
 def salir_handler(event):
     quit()
     data = event.data.get('mensaje', '')
