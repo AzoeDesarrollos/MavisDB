@@ -11,9 +11,11 @@ from pygame import K_PAGEDOWN, K_PAGEUP, K_DOWN, K_UP
 
 class Label(BaseWidget):
 
-    def __init__(self, text, x, y, w, size=16, just=0):
-        self.x, self.y, self.w, = x, y, w
+    def __init__(self, text, x, y, w=0, size=16, just=0):
         self.f = font.SysFont('Verdana', size)
+        if w == 0:
+            w = self.f.size(text)[0]+1
+        self.x, self.y, self.w, = x, y, w
         self.image = render_textrect(text, self.f, w, COLOR_TEXTO, COLOR_FONDO, justification=just)
         self.w, self.h = self.image.get_size()
         self.rect = self.image.get_rect(topleft=(x, y))

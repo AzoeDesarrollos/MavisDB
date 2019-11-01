@@ -15,7 +15,7 @@ class Renderer:
             icon = image.load('lib/icon.png')
             icon.set_colorkey((255, 255, 255, 0))
             display.set_icon(icon)
-        display.set_caption("PMCDB: PyMavisCustomDatabase v0.2.0")
+        display.set_caption("PMCDB: PyMavisCustomDatabase v0.2.2")
         display.set_mode((ANCHO, ALTO))
         cls.contents = LayeredUpdates()
 

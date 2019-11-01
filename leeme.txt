@@ -1,0 +1,37 @@
+Instrucciones sobre el uso de este programa:
+1) Colocar los archivos .csv y .lsxl en la carpeta "data" del programa. El programa procesará
+   esos archivos al inicio para cargar las bases de datos.
+2) Ingresar el nombre del objeto buscado en la barra de consulta. Puede ingresarse un nombre
+   completo, o parte del mismo. Si el nombre estuviere incorrecto, el programa devolverá
+   el o los articulos cuyos nombres más se aproximen a lo buscado.
+3) Hacer clic en el Botón Consulta o bien, tocar la tecla Enter o la tecla Intro del teclado
+   numérico.
+4) Los resultados de la búsqueda aparecerán en una lista debajo de la barra de consulta. 
+   Si el resultado de la busqueda excede el alto de la ventana, se puede usar la rueda del
+   mouse para desplazar el texto. También es posible lograr esto mismo usando las flechas
+   arriba y abajo. PageDown/Up mueven la lista de a tres filas en lugar de 1.
+5) Al hacer clic sobre un articulo, éste camabiará de color y a su izquierda aparecerá 
+   un botón con el signo "+". Tocar este botón, o toclar la tecla "+" en el teclado numérico
+   harán que el item se sume al "carrito" de productos Adquiridos. El total a abonar irá
+   incrementándose a medida que se agregen productos.
+6) Una vez que se hayan agregado todos los objetos que se vayan a comprar, cerrar la compra
+   tocando en el botón del área inferior "Cerrar Compra". Ésto hará que se genere un archivos
+   .txt en la carpeta ventas/año/mes cuyo nombre será el del día en el que se efectuó la compra
+   Sucesivas compras en el mismo día irán reescribiendo dicho archivo, concatenándose hacia abajo.
+7) Si está marcado el checkbox "Última", al tocar el botón "Cerrar Compra" se calculará el total
+   de día, y se ecribirá al final del archivo. Esta acción también cerrará el programa.
+
+Opciones:
+Las cajas de verificacion (checkboxes) permiten que el buscador devuelva los resultados
+pedidos (ya sea precio o ISBN). Si se ha realizado una búsqueda por precio, y también se
+quiere el ISBN, debe repetirse la búsqueda. Simplemente marque la casilla "ISBN" y toque
+de nuevo en el botón Consultar.
+
+Sobre la barra de consulta:
+- La combinación Shift+7 ingresa el carácter "•". Otras combinaciones con shfit son
+  estándar.
+- La tecla Suprimir no funciona, solo es posible borrar hacia atrás usando Backspace.
+- Por lo anterior, el cursor de la barra de consulta siempre está al final del texto.
+- La tecla Escape cierra el programa.
+- El botón "Consulta" no funciona si la bara de consulta "Producto" está vacío.
+

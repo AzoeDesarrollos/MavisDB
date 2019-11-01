@@ -64,9 +64,6 @@ def salir_handler(event):
 
 EventHandler.register(salir_handler, 'salir')
 
-if 'data' not in os.listdir(os.getcwd()):
-    os.mkdir(os.path.join(os.getcwd(), 'data'))
-
 now = datetime.now()
 year = str(now.year)
 month = str(now.month)
