@@ -1,8 +1,8 @@
 
 name "PyMavis Custom DataBase"
 OutFile "instalar.exe"
-BrandingText "PyMavisCustomDataBase (installer by NSIS)"
-InstallDir $DESKTOP
+BrandingText "PyMavisCustomDataBase"
+InstallDir $DESKTOP\PyMavisCustomDB
 
 PageEx directory
 	Caption "PMCDB: Directorio de instalación"
@@ -19,12 +19,13 @@ Section "PMCDB"
     File "main.exe"
     File "leeme.txt"
     File "python37.dll"
+    CreateShortcut $DESKTOP\PMCDB.lnk $INSTDIR\main.exe
 
     SetOutPath $INSTDIR\lib
     File /r lib\*.*
 
     CreateDirectory $INSTDIR\data
-    CreateShortcut "PMCDB.lnk" "$INSTDIR\main.exe"
+
 SectionEnd
 
 Section "Uninstall"
