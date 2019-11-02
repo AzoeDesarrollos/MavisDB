@@ -26,9 +26,9 @@ class AreaVentas:
         year, month = str(now.year), str(now.month)
         root = path.join(path.join(getcwd(), 'ventas', year, month))
         if path.exists(path.join(root, str(now.day) + '.txt')):
-            return open(path.join(root, str(now.day) + '.txt'), mode)
+            return open(path.join(root, str(now.day) + '.txt'), encoding='utf-8', mode=mode)
         else:
-            return open(path.join(root, str(now.day) + '.txt'), 'x+')
+            return open(path.join(root, str(now.day) + '.txt'), encoding='utf-8', mode='x+')
 
     @classmethod
     def total_del_dia(cls, now):
@@ -48,7 +48,7 @@ class AreaVentas:
     def ultima_compra(cls, now):
         total = cls.total_del_dia(now)
         with cls.open_sales_file(now, 'a') as file:
-            file.write('\n**TOTAL DEL DÍA: $' + str(total))
+            file.write('\nTOTAL DEL DÍA: $' + str(total)+'\n')
 
     @classmethod
     def checkout(cls):
