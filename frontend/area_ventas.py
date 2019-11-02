@@ -22,17 +22,18 @@ class AreaVentas:
         Label('Última', chk.rect.right + 3, chk.rect.top - 2, size=12)
 
     @staticmethod
-    def open_sales_file(mode):
-        now = datetime.now()
+    def open_sales_file(now, mode):
         year, month = str(now.year), str(now.month)
         root = path.join(path.join(getcwd(), 'ventas', year, month))
         if path.exists(path.join(root, str(now.day) + '.txt')):
             return open(path.join(root, str(now.day) + '.txt'), mode)
+        else:
+            return open(path.join(root, str(now.day) + '.txt'), 'x+')
 
     @classmethod
-    def total_del_dia(cls):
+    def total_del_dia(cls, now):
         total = 0
-        with cls.open_sales_file('r') as file:
+        with cls.open_sales_file(now, 'r') as file:
             for line in file.readlines():
                 if "Total" in line:
                     total += float(line.strip('Total:$ '))
@@ -44,21 +45,21 @@ class AreaVentas:
         cls.total_lbl.update_text('Total\n' + '$' + str(cls.subtotal_acumulado), just=1)
 
     @classmethod
-    def ultima_compra(cls):
-        total = cls.total_del_dia()
-        with cls.open_sales_file('a') as file:
+    def ultima_compra(cls, now):
+        total = cls.total_del_dia(now)
+        with cls.open_sales_file(now, 'a') as file:
             file.write('\n**TOTAL DEL DÍA: $' + str(total))
 
     @classmethod
     def checkout(cls):
         v = 0
         now = datetime.now()
-        with cls.open_sales_file('r') as file:
+        with cls.open_sales_file(now, 'r') as file:
             for line in file.readlines():
                 if 'Venta' in line:
                     v += 1
 
-        with cls.open_sales_file('a') as file:
+        with cls.open_sales_file(now, 'a') as file:
             file.write('Venta #' + str(v) + ':' + str(now.hour) + ':' + str(now.minute) + ':' + str(now.second) + '\n')
             for item in cls.cart.items:
                 file.write(item.item.name.title() + '.....$' + str(item.item.price) + '\n')
@@ -69,5 +70,5 @@ class AreaVentas:
         cls.subtotal_acumulado = 0
 
         if cls.ultima_chk.state:
-            cls.ultima_compra()
+            cls.ultima_compra(now)
             EventHandler.trigger('salir', 'AreaVentas', {})
