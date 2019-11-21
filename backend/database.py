@@ -168,7 +168,7 @@ def process_ivrea_xlsx(ruta):
                 elif r[3].value is not None:
                     isbn = ''.join(r[3].value.split('-'))
                 tabla.append({
-                    'código': r[1].value,
+                    'codigo': r[1].value,
                     'nombre': r[2].value.lstrip().rstrip(),
                     'ISBN': isbn,
                     'EAN': r[4].value,
