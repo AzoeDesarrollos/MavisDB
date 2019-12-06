@@ -1,167 +1,60 @@
-from .resources import read_csv, is_empty, trim, trim2
+from .resources import read_csv, is_empty, trim, trim2, write_csv
 from backend.levenshtein import probar_input, compare_by_lenght
-from os import path, getcwd, listdir
+from os import path as ospath, getcwd, listdir
 import openpyxl
 
 
-def process_devir(ruta):
-    top = []
-    bottom = []
-    for row in read_csv(ruta):
-        if not is_empty(row) and row[0] != '':
-            column = row.index('')
-            a = trim(row[:column])
-            b = trim(row[column + 1:])
-            if len(a) > 1:
-                if len(a) < 6:
-                    a.extend([''] * (6 - len(a)))
-                top.append(a)
-
-            if len(b) > 1:
-                if len(b) < 6:
-                    b.extend([''] * (6 - len(b)))
-                bottom.append(b)
-
-    table = top[1:] + bottom[1:]
-    tabla = []
-    for j, row in enumerate(table):
-        row = row[1:]
-        for i, value in enumerate(row):
-            if value.startswith('$'):
-                value = value.replace('.', '').replace(',', '.')
-                row[i] = float(value[1:])
-
-        tabla.append({
-            'codigo': j,
-            'nombre': row[0].upper(),
-            'precio_siva': row[1],
-            'precio': row[2],
-            'pedido': row[3] if row[3] is not '' else None,
-            'otro': row[4] if row[4] is not '' else None
-        })
-
-    return tabla
-
-
 def process_devir_xlsx(ruta):
-    top = []
-    bottom = []
+    tabla = []
     document = openpyxl.load_workbook(ruta)
     for n_hoja in document.sheetnames:
-        rows = list(document[n_hoja].rows)
-        for row in rows[9:]:
-            if type(row[0].value) is int:
-                a = trim2(row[:5])
-
-                if len(a) > 1:
-                    if len(a) < 6:
-                        a.extend([''] * (6 - len(a)))
-                    top.append(a)
-
-            if type(row[6].value) is int:
-                b = trim2(row[6:])
-                if len(b) > 1:
-                    if len(b) < 6:
-                        b.extend([''] * (6 - len(b)))
-                    bottom.append(b)
+        ws = document[n_hoja]
+        for row in ws.iter_rows():
+            if type(row[2].value) is int:
+                tabla.append({
+                    'codigo': row[2].value,
+                    'nombre': str(row[3].value).upper(),
+                    'precio': row[5].value,
+                    'otro': row[1].value,
+                })
 
     document.close()
-    table = top + bottom
-    tabla = []
-    for j, row in enumerate(table):
-        row = row[1:]
-        tabla.append({
-            'codigo': j,
-            'nombre': row[0].upper(),
-            'precio_siva': row[1],
-            'precio': row[2],
-            'pedido': row[3],
-            'otro': row[4],
-        })
-
     return tabla
-
-
-def process_sd_dist(ruta):
-    tabla = []
-    for fila in read_csv(ruta):
-        if fila[1] != '' and len(fila[1]) == 11:
-            f = trim(fila[1:], delete_empty=False)
-            fila = f[0:4] + f[5:]
-            tabla.append(fila)
-
-    table = []
-    for row in tabla:
-        for i, value in enumerate(row):
-            if value.startswith('$'):
-                value = value.replace('.', '').replace(',', '.')
-                row[i] = float(value[1:])
-            elif value.endswith('%'):
-                row[i] = int(value[:value.index('%')])
-        table.append({
-            'codigo': row[0],
-            'nombre': row[1].upper(),
-            'precio': row[2],
-            'ISBN': row[4],
-            'EAN': row[5],
-            'ADENDUM': row[6],
-            'editorial': row[7],
-            'autor': row[8]
-        })
-    return table
 
 
 def process_sd_dist_xlsx(ruta):
     tabla = []
     document = openpyxl.load_workbook(ruta)
     for n_hoja in document.sheetnames:
-        hoja = list(document[n_hoja].rows)[5:]
-        for fila in hoja:
-            if fila[1].value is not None and len(fila[1].value) == 11:
-                f = trim2(fila[1:], delete_empty=False)
-                fila = f[0:3] + f[5:]
-                tabla.append(fila)
-
+        ws = document[n_hoja]
+        for row in ws.iter_rows():
+            if type(row[3].value) is int:
+                isbn = '-'
+                if type(row[3].value) is int:
+                    isbn = str(row[4].value)
+                elif row[3].value is not None:
+                    isbn = ''.join(row[4].value.split('-'))
+                tabla.append({
+                    'codigo': row[1].value,
+                    'nombre': str(row[2].value).strip().upper(),
+                    'precio': float(row[3].value),
+                    'ISBN': isbn,
+                    'EAN': row[7].value.strip(),
+                    'ADENDUM': row[8].value.strip(),
+                    'editorial': row[9].value.strip(),
+                    'autor': row[10].value.strip()
+                })
     document.close()
-    table = []
-    for row in tabla:
-        n = row[1]
-        table.append({
-            'codigo': row[0],
-            'nombre': n.upper() if type(n) is str else str(n).upper(),
-            'precio': row[2],
-            'ISBN': row[3],
-            'EAN': row[4],
-            'ADENDUM': row[5],
-            'editorial': row[6],
-            'autor': row[7]
-        })
-    return table
-
-
-def process_ivrea(ruta):
-    tabla = []
-    for row in read_csv(ruta)[9:]:
-        if row[2] != '':
-            tabla.append({
-                'codigo': row[1],
-                'nombre': row[2].lstrip().rstrip(),
-                'ISBN': row[3],
-                'EAN': row[4].lstrip().rstrip(),
-                'ADENDUM': row[5],
-                'precio': float(row[6].replace(',', '.').strip(' $')),
-                'agotado': 1 if len(row[8]) else 0
-            })
     return tabla
 
 
 def process_ivrea_xlsx(ruta):
     tabla = []
     document = openpyxl.load_workbook(ruta)
-    for n_hoja in document.sheetnames:
-        rows = list(document[n_hoja].rows)
-        for r in rows[9:]:
-            if r[2].value is not None:
+    for n_hoja in [i for i in document.sheetnames if ('MANGA' in i) or ('COMICS' in i)]:
+        ws = document[n_hoja]
+        for r in ws.iter_rows():
+            if r[2].value is not None and type(r[6].value) is int:
                 isbn = '-'
                 if type(r[3].value) is int:
                     isbn = str(r[3].value)
@@ -169,7 +62,7 @@ def process_ivrea_xlsx(ruta):
                     isbn = ''.join(r[3].value.split('-'))
                 tabla.append({
                     'codigo': r[1].value,
-                    'nombre': r[2].value.lstrip().rstrip(),
+                    'nombre': str(r[2].value).lstrip().rstrip(),
                     'ISBN': isbn,
                     'EAN': r[4].value,
                     'ADENDUM': r[5].value,
@@ -178,23 +71,6 @@ def process_ivrea_xlsx(ruta):
                 })
 
     document.close()
-    return tabla
-
-
-def process_plan(ruta):
-    tabla = []
-    for row in read_csv(ruta)[9:]:
-        if row[0] != '':
-            t = row[3].upper()
-            t = t.lstrip().rstrip().split(' - ')[0] if 'SIN STOCK' in t else t.lstrip().rstrip()
-            tabla.append({
-                'codigo': row[0],
-                'nombre': t,
-                'ISBN': row[2],
-                'precio': float(row[4].replace(',', '.').strip(' $')),
-                'agotado': 1 if 'Sin Stock' in row[3].title() else 0
-            })
-
     return tabla
 
 
@@ -227,6 +103,49 @@ def process_plan_xlsx(ruta):
     return tabla
 
 
+def process_mavis(ruta):
+    tabla = []
+    document = openpyxl.load_workbook(ruta)
+    for n_hoja in document.sheetnames:
+        ws = document[n_hoja]
+        for row in ws.iter_rows():
+            if type(row[1].value) is int:
+                tabla.append({
+                    'nombre': row[0].value.strip().upper(),
+                    'precio': float(row[1].value),
+                    'otro': row[3].value
+                })
+
+    document.close()
+    return tabla
+
+
+def process_pannini(ruta):
+    tabla = []
+    document = openpyxl.load_workbook(ruta)
+    for n_hoja in document.sheetnames:
+        ws = document[n_hoja]
+        for row in ws.iter_rows():
+            if type(row[6].value) is int:
+                isbn = '-'
+                if type(row[3].value) is int:
+                    isbn = str(row[6].value)
+                elif row[3].value is not None:
+                    isbn = ''.join(row[6].value.split('-'))
+                tabla.append({
+                    'codigo': row[1].value,
+                    'nombre': str(row[2].value).strip().upper(),
+                    'precio': float(row[3].value),
+                    'ISBN': isbn,
+                    'EAN': row[7].value.strip(),
+                    'editorial': row[8].value.strip(),
+                    'autor': row[9].value.strip()
+                })
+
+    document.close()
+    return tabla
+
+
 def open_table(ruta):
     tabla = []
     datos = read_csv(ruta)
@@ -250,28 +169,22 @@ def open_table(ruta):
 
 root = getcwd() + '/data'
 tablas = []
-for file in listdir(root):
-    route = path.join(root, file)
-    if 'Devir' in file:
-        if file.endswith('.csv'):
-            tablas.append(process_devir(route))
-        else:
-            tablas.append(process_devir_xlsx(route))
-    elif 'SD' in file:
-        if file.endswith('.csv'):
-            tablas.append(process_sd_dist(route))
-        else:
-            tablas.append(process_sd_dist_xlsx(route))
-    elif 'IVREA' in file:
-        if file.endswith('.csv'):
-            tablas.append(process_ivrea(route))
-        else:
-            tablas.append(process_ivrea_xlsx(route))
-    elif 'Plan' in file:
-        if file.endswith('.csv'):
-            tablas.append(process_plan(route))
-        else:
-            tablas.append(process_plan_xlsx(route))
+for fd in listdir(root):
+    route = ospath.join(root, fd)
+    for file in listdir(route):
+        path = ospath.join(route, file)
+        if fd == 'DEVIR':
+            tablas.append(process_devir_xlsx(path))
+        elif fd == 'SD':
+            tablas.append(process_sd_dist_xlsx(path))
+        elif fd == 'IVREA':
+            tablas.append(process_ivrea_xlsx(path))
+        elif fd == 'PLAN T':
+            tablas.append(process_plan_xlsx(path))
+        elif fd == 'PANNINI':
+            tablas.append(process_pannini(path))
+        elif fd == 'MAVIS':
+            tablas.append(process_mavis(path))
 
 
 def select_many(key, columns):

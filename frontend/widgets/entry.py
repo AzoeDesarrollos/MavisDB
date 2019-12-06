@@ -89,8 +89,12 @@ class Entry(BaseWidget):
                 name = ':' if shift else raw
             elif raw == ',':
                 name = ';' if shift else raw
-            elif raw == "'":
+            elif raw == "´":
                 self.acento = True
+            elif raw == "'":
+                name = "?" if shift else "'"
+            elif raw == '¡':
+                name = '¿' if shift else '¡'
             else:
                 name = raw.upper() if shift else raw
 
